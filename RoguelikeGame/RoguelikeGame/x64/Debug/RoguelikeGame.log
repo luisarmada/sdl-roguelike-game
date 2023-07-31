@@ -1,2 +1,6 @@
 ﻿  Game.cpp
+  Main.cpp
+  Player.cpp
+  TextureManager.cpp
+  Generating Code...
   RoguelikeGame.vcxproj -> D:\Projects\VisualStudio\sdl-roguelike-game\RoguelikeGame\x64\Debug\RoguelikeGame.exe

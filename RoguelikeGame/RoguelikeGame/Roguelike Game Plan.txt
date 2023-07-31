@@ -1,0 +1,13 @@
+WASD to move
+
+Player has an attack stat and a defense stat (and health)
+
+Enemies have a health stat and an attack stat
+
+On Player and enemy collision, enemy attacks first
+- Do playerhealth -= (enemy attack - defense)
+- Enemyhealth - player attack
+
+Player goal is to find chests to increase money
+Can increase attack or defense at specific points
+Perma death

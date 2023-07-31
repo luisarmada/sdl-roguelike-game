@@ -1,7 +1,6 @@
 #include "Game.h"
-
-SDL_Texture* playerTex;
-SDL_Rect srcR, destR;
+#include "TextureManager.h"
+#include "Player.h"
 
 Game::Game()
 {
@@ -15,7 +14,9 @@ Game::~Game()
 	Clean();
 }
 
-void Game::Initialise(const char* title, int width, int height, bool fullscreen)
+Player* player;
+
+void Game::Initialise(const char* title, bool fullscreen)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
@@ -27,14 +28,12 @@ void Game::Initialise(const char* title, int width, int height, bool fullscreen)
 			flags = SDL_WINDOW_FULLSCREEN;
 		}
 
-		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screenWidth, screenHeight, flags);
 
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		SDL_SetRenderDrawColor(renderer, 34, 35, 35, 255);
 
-		SDL_Surface* tmpSurface = IMG_Load("sprites/player_sprite.png");
-		playerTex = SDL_CreateTextureFromSurface(renderer, tmpSurface);
-		SDL_FreeSurface(tmpSurface);
+		player = new Player(renderer);
 
 		isRunning = true;
 	}
@@ -50,23 +49,59 @@ void Game::Initialise(const char* title, int width, int height, bool fullscreen)
 void Game::HandleEvents()
 {
 	SDL_Event event;
-	SDL_PollEvent(&event);
-
-	switch (event.type)
+	while (SDL_PollEvent(&event)) 
 	{
+		switch (event.type)
+		{
 		case SDL_QUIT:
 			isRunning = false;
+			break;
+		case SDL_KEYDOWN:
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_w: case SDLK_UP:
+				player->Move(player->DIR_UP);
+				break;
+			case SDLK_a: case SDLK_LEFT:
+				player->Move(player->DIR_LEFT);
+				break;
+			case SDLK_s: case SDLK_DOWN:
+				player->Move(player->DIR_DOWN);
+				break;
+			case SDLK_d: case SDLK_RIGHT:
+				player->Move(player->DIR_RIGHT);
+				break;
+			}
+			break;
+		case SDL_KEYUP:
+			switch (event.key.keysym.sym)
+			{
+				case SDLK_w: case SDLK_UP:
+					player->ResetMove(player->DIR_UP);
+					break;
+				case SDLK_a: case SDLK_LEFT:
+					player->ResetMove(player->DIR_LEFT);
+					break;
+				case SDLK_s: case SDLK_DOWN:
+					player->ResetMove(player->DIR_DOWN);
+					break;
+				case SDLK_d: case SDLK_RIGHT:
+					player->ResetMove(player->DIR_RIGHT);
+					break;
+			}
 			break;
 		default:
 
 			break;
+		}
 	}
+
+	
 }
 
 void Game::Update()
 {
-	destR.h = 64;
-	destR.w = 64;
+	
 }
 
 void Game::Render()
@@ -74,7 +109,7 @@ void Game::Render()
 	SDL_RenderClear(renderer);
 
 	// Add Stuff to Render
-	SDL_RenderCopy(renderer, playerTex, NULL, &destR);
+	player->Update();
 
 	SDL_RenderPresent(renderer);
 }
@@ -89,7 +124,7 @@ void Game::Clean()
 
 void Game::GameLoop()
 {
-	Initialise("My Roguelike", 1600, 900, false);
+	Initialise("My Roguelike", false);
 
 	while (Running())
 	{

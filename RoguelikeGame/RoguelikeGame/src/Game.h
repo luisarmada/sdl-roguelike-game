@@ -11,7 +11,7 @@ public:
 	Game();
 	~Game();
 
-	void Initialise(const char* title, int width, int height, bool fullscreen);
+	void Initialise(const char* title, bool fullscreen);
 	void HandleEvents();
 	void Update();
 	void Render();
@@ -25,6 +25,10 @@ private:
 	bool isRunning;
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+
+public:
+	static const int screenWidth = 1600;
+	static const int screenHeight = 896;
 
 };
 
